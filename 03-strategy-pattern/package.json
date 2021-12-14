@@ -1,0 +1,18 @@
+{
+  "name": "03-strategy-pattern",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "concurrently": "^6.3.0",
+    "nodemon": "^2.0.14"
+  },
+  "scripts": {
+    "start:watch": "tsc -w",
+    "start:run": "nodemon index.js",
+    "start": "concurrently yarn:start:*"
+  },
+  "devDependencies": {
+    "typescript": "^4.4.4"
+  }
+}
