@@ -1,7 +1,7 @@
 enum Role {
-  Swordsman    = 'Swordsman',
-  Warlock      = 'Warlock',
-  Highwayman   = 'Highwayman',
+  Swordsman = 'Swordsman',
+  Warlock = 'Warlock',
+  Highwayman = 'Highwayman',
   BountyHunter = 'Bounty Hunter'
 }
 interface ICharacter {
@@ -19,9 +19,9 @@ interface IStats {
   defense: number
 }
 class defaultCharacter {
-  constructor (
+  constructor(
     public name: string
-  ) {}
+  ) { }
 
   public walk(position: number) {
     console.log(`Walk to ${position} point`)
@@ -29,7 +29,7 @@ class defaultCharacter {
 }
 // 繼承跟介面的綁定也可以同時進行
 class Character extends defaultCharacter implements ICharacter, IStats {
-  constructor (
+  constructor(
     public name: string,
     public role: Role,
     public health: number = 100,
@@ -49,13 +49,13 @@ class Character extends defaultCharacter implements ICharacter, IStats {
 
     switch (this.role) {
       case Role.Swordsman: verb = 'attacking'
-      break
+        break
       case Role.Warlock: verb = 'cursing'
-      break
+        break
       case Role.Highwayman: verb = 'ambushing'
-      break
+        break
       case Role.BountyHunter: verb = 'threatening'
-      break
+        break
       default: throw new Error(`${this.role} didn't exist!`)
     }
 
@@ -72,7 +72,7 @@ let character: IStats = new Character('Maxwell', Role.Swordsman)
 // - 如果變數被推論亦或者註記為 C，則變數除了可以呼叫類別裡自定義的 public 成員外，也可以呼叫介面 I1、I2、... In 融合過後的規格之屬性與方法。
 // - 如果變數被註記為 I1、I2、... In 介面裡其中一個介面 Im，儘管變數可以被指派有實踐介面 Im 類別建構出來的物件，卻只能呼叫 Im 介面裡面的規格之屬性與方法。
 class BestWarlock extends defaultCharacter implements ICharacter, IStats {
-  constructor (
+  constructor(
     public name: string,
     public role: Role = Role.Warlock,
     public health: number = 1000,
@@ -83,7 +83,7 @@ class BestWarlock extends defaultCharacter implements ICharacter, IStats {
     super(name)
   }
 
-  public specialPower () {
+  public specialPower() {
     this.mana = this.mana * 2
   }
 
@@ -119,3 +119,27 @@ const bountyHunter = new BountyHunter('Alex')
 // 子類別繼承父類別，除了擁有父類別 public 與 protected 模式的成員外，也同時繼承父類別實踐之介面的性質
 // attack 方法需要 ICharacter 型別的參數，bountyHunter 可以成為參數
 character3.attack(bountyHunter)
+
+interface Eat {
+  digestiveSpeed: number
+  eat: (food: string) => void
+  drink: () => void
+}
+
+class Man implements Eat {
+  constructor(public name: string) { }
+  eat() { // 實作界面方法，若介面方法有定義參數型別，則可接受參數為 undefined
+  }
+  drink(beverage: string) { // 但若介面方法沒有定義參數型別，則實作界面方法時需要兼容 undefined
+  }
+}
+
+class OldMan extends Man {
+  constructor(name: string) {
+    super(name)
+  }
+  eat(food: string | number | null) { // 同上，需要兼容 Man 定義的 eat: () => void
+  }
+}
+
+// 原則上還是遵照介面定義的規格實作，避免在實作 class 與其衍生 class 時擴增參數型別。
