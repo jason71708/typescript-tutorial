@@ -13,7 +13,7 @@ class Monster {
     private type: string,
     protected power: number,
     public tag?: string
-  ) {}
+  ) { }
 
   public attack() {
     // ...
@@ -38,5 +38,46 @@ ddd.attack()
 ddd.name
 ddd.tag
 // 就算你不對子類別自訂建構子函式，子類別會直接延用父類別建構子函式的規格，要求使用者必須代入建立物件時所需具備的參數！
-class NormalMonster extends Monster {}
+class NormalMonster extends Monster { }
 const nnn = new NormalMonster(50, 'nnn', 'Normal', 10)
+
+// 跨實例但是相同子類別是否能存取 protected 與 private？
+class Shape {
+  constructor(
+    protected points: number[],
+    private name: string
+  ) { }
+}
+
+class Circle extends Shape {
+  private center: number = 0;
+  constructor() {
+    super([1], 'Circle')
+  }
+  accessOtherCircle() {
+    const otherCicle1 = new Circle()
+    const otherCicle2: Shape = new Circle()
+
+    let accessSuccess: any = null
+    let accessError: any = null
+
+    // 就算實際上 otherCicle2 是 Circle 的實例，但是靜態檢查型別上這邊被註記成 Shape
+    // 相當於我從外部去存取 Shape，所以存取 protected 成員時會報錯
+    accessSuccess = this.points
+    accessSuccess = this.name
+    accessSuccess = this.center
+    accessSuccess = otherCicle1.points
+    accessError = otherCicle1.name
+    accessSuccess = otherCicle1.center
+    accessError = otherCicle2.points
+    accessError = otherCicle2.name
+    accessError = otherCicle2.center
+    // private 沒什麼問題，就算跨實例也只在相同型別時可存取
+  }
+}
+
+// 而 private 有個 hack 方法
+const circle = new Circle()
+circle.center
+circle['center']
+// 可使用中括號方式存取 private 成員
