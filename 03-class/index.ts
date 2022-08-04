@@ -334,3 +334,68 @@ class UnicornCat extends Cat {
 let cat: Cat = new UnicornCat('Candy')
 // 因為 TypeScript 參考的是 Cat 類別而不是 UnicornCat 類別的成員，因此才會被 TS 警告
 cat.puke()
+
+// `this` 在 class 與外部的狀況
+class Box {
+  content: string = 'box'
+  getContent() {
+    return this.content
+  }
+}
+
+const box = new Box();
+const otherBox = {
+  content: "otherBox",
+  getContent: box.getContent,
+};
+
+// Prints "ootherBoxbj", not "box"
+console.log(otherBox.getContent());
+
+// 用箭頭函式可以將當前作用域的 this 保留下來
+class Box2 {
+  content: string = 'box2'
+  getContent = () => {
+    return this.content
+  }
+}
+
+const box2 = new Box2();
+const otherBox2 = {
+  content: "otherBox2",
+  getContent: box2.getContent,
+};
+
+// Prints "box2"
+console.log(otherBox2.getContent());
+
+// 或是在方法函式用 `this` 參數綁定型別
+class Box3 {
+  content: string = 'box3';
+
+  text: string = '';
+
+  getContent(this: Box3) {
+    return this.content;
+  }
+}
+
+const box3 = new Box3();
+const g = box3.getContent;
+g();
+// 在之後有任何物件調用此方法時，若該物件的成員們跟 `this` 綁定型別的成員不一致，將會報錯
+const otherBox3 = {
+  content: 'otherBox3',
+  getContent: box3.getContent,
+};
+
+const otherBox4 = {
+  content: 'otherBox4',
+  text: 'text',
+  getContent: box3.getContent,
+}
+
+console.log(otherBox3.getContent());
+// Prints "otherBox4"
+console.log(otherBox4.getContent());
+// 加 `this` 參數僅能用於 TS 幫忙檢查型別，編譯後的 JS 行為依然會用當前調用該方法的物件當作 this
