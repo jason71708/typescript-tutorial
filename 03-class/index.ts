@@ -335,7 +335,9 @@ let cat: Cat = new UnicornCat('Candy')
 // 因為 TypeScript 參考的是 Cat 類別而不是 UnicornCat 類別的成員，因此才會被 TS 警告
 cat.puke()
 
-// `this` 在 class 與外部的狀況
+/**
+ * `this` 在 class 與外部的狀況
+ */
 class Box {
   content: string = 'box'
   getContent() {
@@ -399,3 +401,33 @@ console.log(otherBox3.getContent());
 // Prints "otherBox4"
 console.log(otherBox4.getContent());
 // 加 `this` 參數僅能用於 TS 幫忙檢查型別，編譯後的 JS 行為依然會用當前調用該方法的物件當作 this
+
+/**
+ * 兩個不同 class 的關聯
+ */
+class One {
+  constructor(
+    public number: number = 1
+  ) { }
+}
+class OnePlusOne {
+  constructor(
+    public number: number = 2,
+  ) { }
+}
+
+// 成員都一樣可互相指派
+const a: One = new OnePlusOne()
+
+class Two {
+  constructor(
+    public number: number = 2,
+    public dot: boolean = true
+  ) { }
+}
+
+// 類別成員包含其他類別成員可視為它的子類別，儘管沒有繼承
+const b: One = new Two()
+
+// 也由於上述的機制，千萬別建立空白的類別，他可以是任何類別的父類別
+class Empty { }
